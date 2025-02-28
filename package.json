@@ -17,6 +17,7 @@
   "author": "Sushant Patial",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.8.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.0",
     "cookie-parser": "^1.4.6",
@@ -29,6 +30,7 @@
     "mongoose": "^6.3.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.4",
+    "nodemon": "^3.1.9",
     "razorpay": "^2.8.1",
     "validator": "^13.7.0"
   }

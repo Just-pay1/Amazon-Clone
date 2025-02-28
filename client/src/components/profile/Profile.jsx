@@ -13,13 +13,13 @@ const Profile = () => {
 
   const navigate = useNavigate();
 
-  useEffect(function() {
+  useEffect(function () {
     async function fetchUser() {
       try {
-        const res = await axios.get("https://amazonclone-sp.herokuapp.com/api/getAuthUser", {
+        const res = await axios.get("http://localhost:8000/api/getAuthUser", {
           withCredentials: true
         })
-  
+
         if (res) {
           setUserData(res.data);
           setIsLoading(false);
@@ -45,17 +45,17 @@ const Profile = () => {
       <>
         {
           isLoading ? <Loader /> :
-          <div className='profile'>
-            <NameBanner name={fname} />
-            <UserDetails user={userData} />
-          </div>
+            <div className='profile'>
+              <NameBanner name={fname} />
+              <UserDetails user={userData} />
+            </div>
         }
       </>
     )
   } else {
     <Loader />
   }
-  
+
 }
 
 export default Profile;

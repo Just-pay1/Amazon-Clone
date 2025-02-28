@@ -18,11 +18,11 @@ import ListItem from '@mui/material/ListItem';
 
 const Navbar = () => {
 
-  $(window).on('scroll', function() {
+  $(window).on('scroll', function () {
     if ($(window).scrollTop() > 60) {
       $('nav').css({ 'position': 'fixed' });
       $('.sub-nav').css({ 'margin-top': '60px' });
-    } 
+    }
     if ($(window).scrollTop() === 0) {
       $('nav').css({ 'position': 'relative' });
       $('.sub-nav').css({ 'margin-top': '0px' });
@@ -37,131 +37,131 @@ const Navbar = () => {
   const [products, setProducts] = useState([]);
 
 
-    useEffect(function() {
-      // Fetching user data
-      async function fetchUser() {
-        try {
-          const res = await axios.get("https://amazonclone-sp.herokuapp.com/api/getAuthUser", {
-            withCredentials: true
-          });
-  
-          if (res) {
-            const name = res.data.name;
-            const fname = name.substring(0, name.indexOf(' '));
-            const fletter = name.substring(0, 1);
-    
-            const cartArr = res.data.cart;
-            let totalQty = 0;
-            for (let i = 0; i < cartArr.length; i++) {
-              totalQty += cartArr[i].qty;
-            }
-    
-            setLoginMsg(fname);
-            setCartValue(totalQty);
-            setProfilePhoto(<div onClick={toggleDrawer(true)} className="profile"><div id='profile-letter'>{fletter}</div></div>);
-            setLoggedIn(true);
+  useEffect(function () {
+    // Fetching user data
+    async function fetchUser() {
+      try {
+        const res = await axios.get("http://localhost:8000/api/getAuthUser", {
+          withCredentials: true
+        });
 
-            setTimeout(function() {
-              fetchUser();
-            }, 2000)
+        if (res) {
+          const name = res.data.name;
+          const fname = name.substring(0, name.indexOf(' '));
+          const fletter = name.substring(0, 1);
+
+          const cartArr = res.data.cart;
+          let totalQty = 0;
+          for (let i = 0; i < cartArr.length; i++) {
+            totalQty += cartArr[i].qty;
           }
-  
-        } catch (error) {
-          if (error.response.data.message === "No token provided") {
-            
-          } else {
-            console.log(error);
-          }
+
+          setLoginMsg(fname);
+          setCartValue(totalQty);
+          setProfilePhoto(<div onClick={toggleDrawer(true)} className="profile"><div id='profile-letter'>{fletter}</div></div>);
+          setLoggedIn(true);
+
+          setTimeout(function () {
+            fetchUser();
+          }, 2000)
         }
-      }
 
-      // Fetching products
-      async function fetchProducts() {
-        const res = await axios.get("https://amazonclone-sp.herokuapp.com/api/products");
-        setProducts(res.data);
-      }
+      } catch (error) {
+        if (error.response.data.message === "No token provided") {
 
-      fetchUser();
-      fetchProducts();
-    }, [])
-
-    const navigate = useNavigate();
-    // Logout 
-      function logout() {
-        try {
-          const res = axios.get("https://amazonclone-sp.herokuapp.com/api/logout", {
-            withCredentials: true
-          })
-
-          if (res) {
-            navigate("/");
-          
-            setLoginMsg("Sign in");
-            setCartValue("0");
-            setProfilePhoto(<NavLink to="/login" className='profile'><PersonIcon id="profile-icon" /></NavLink>);
-            setLoggedIn("false");
-          }
-        } catch (error) {
+        } else {
           console.log(error);
         }
       }
-
-    // Profile button
-    const anchor = "right";
-    
-    const [state, setState] = React.useState({
-      right: false
-    });
-  
-    const toggleDrawer = (open) => (event) => {
-      if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-        return;
-      }
-      setState({ ...state, [anchor]: open });
-    };
-  
-    const list = (anchor) => (
-      <Box
-        sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
-        role="presentation"
-        onClick={toggleDrawer(false)}
-        onKeyDown={toggleDrawer(false)}
-      >
-        <div className='profile-options'>
-          <h5>Hello, {loginMsg}</h5>
-          <a href='/profile'>
-            <div className='profile-option'>
-              <PersonOutlineOutlinedIcon className='profile-icon' /> Your Account
-            </div>
-          </a>
-          <a href='/orders'>
-            <div className='profile-option'>
-              <ShoppingCartOutlinedIcon className='profile-icon' /> Your Orders
-            </div>
-          </a>
-          <div>
-            <div className='profile-option' onClick={ logout }>
-              <LogoutOutlinedIcon className='profile-icon' /> Sign Out
-            </div>
-          </div>
-        </div>
-      </Box>
-    );
-
-    const [searchText, setSearchText] = useState("");
-    const [listHidden, setListHidden] = useState(true);
-
-    // Search filter 
-    function searchChange(e) {
-      setSearchText(e.target.value);
-      setListHidden(false);
-      if (e.target.value === "" || e.target.value.replace(/\s/g, "") == "") {
-        setListHidden(true);
-      }
     }
 
-    let path="";
-    
+    // Fetching products
+    async function fetchProducts() {
+      const res = await axios.get("http://localhost:8000/api/products");
+      setProducts(res.data);
+    }
+
+    fetchUser();
+    fetchProducts();
+  }, [])
+
+  const navigate = useNavigate();
+  // Logout 
+  function logout() {
+    try {
+      const res = axios.get("http://localhost:8000/api/logout", {
+        withCredentials: true
+      })
+
+      if (res) {
+        navigate("/");
+
+        setLoginMsg("Sign in");
+        setCartValue("0");
+        setProfilePhoto(<NavLink to="/login" className='profile'><PersonIcon id="profile-icon" /></NavLink>);
+        setLoggedIn("false");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // Profile button
+  const anchor = "right";
+
+  const [state, setState] = React.useState({
+    right: false
+  });
+
+  const toggleDrawer = (open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setState({ ...state, [anchor]: open });
+  };
+
+  const list = (anchor) => (
+    <Box
+      sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
+      role="presentation"
+      onClick={toggleDrawer(false)}
+      onKeyDown={toggleDrawer(false)}
+    >
+      <div className='profile-options'>
+        <h5>Hello, {loginMsg}</h5>
+        <a href='/profile'>
+          <div className='profile-option'>
+            <PersonOutlineOutlinedIcon className='profile-icon' /> Your Account
+          </div>
+        </a>
+        <a href='/orders'>
+          <div className='profile-option'>
+            <ShoppingCartOutlinedIcon className='profile-icon' /> Your Orders
+          </div>
+        </a>
+        <div>
+          <div className='profile-option' onClick={logout}>
+            <LogoutOutlinedIcon className='profile-icon' /> Sign Out
+          </div>
+        </div>
+      </div>
+    </Box>
+  );
+
+  const [searchText, setSearchText] = useState("");
+  const [listHidden, setListHidden] = useState(true);
+
+  // Search filter 
+  function searchChange(e) {
+    setSearchText(e.target.value);
+    setListHidden(false);
+    if (e.target.value === "" || e.target.value.replace(/\s/g, "") == "") {
+      setListHidden(true);
+    }
+  }
+
+  let path = "";
+
   return (
     <header>
       <nav>
@@ -179,7 +179,7 @@ const Navbar = () => {
           </button>
         </div>
 
-        <List className='search-list' hidden={ listHidden }>
+        <List className='search-list' hidden={listHidden}>
           {
             products.filter((productsFound) => {
               return productsFound.name.toLowerCase().includes(searchText.toLowerCase())
@@ -187,7 +187,7 @@ const Navbar = () => {
               return (
                 <ListItem key={index} className='list-item'>
                   <NavLink to={`/product/${product.id}`}>
-                  {product.name}
+                    {product.name}
                   </NavLink>
                 </ListItem>
               )
@@ -196,7 +196,7 @@ const Navbar = () => {
         </List>
 
         <div className="buttons">
-          <a href={ loggedIn ? "/profile" : "/login" } className="login">
+          <a href={loggedIn ? "/profile" : "/login"} className="login">
             <div className="button-text">
               Hello, {loginMsg}
             </div>
@@ -205,7 +205,7 @@ const Navbar = () => {
             <Badge badgeContent={cartValue} color="primary">
               <ShoppingCartOutlinedIcon id="cart-icon" />
             </Badge>
-            
+
             <div className="button-text">
               Cart
             </div>
@@ -214,7 +214,7 @@ const Navbar = () => {
           {profilePhoto}
 
         </div>
-        
+
       </nav>
 
       <SubNavbar />
@@ -228,7 +228,7 @@ const Navbar = () => {
           {list(anchor)}
         </Drawer>
       </React.Fragment>
-      
+
     </header>
   )
 }

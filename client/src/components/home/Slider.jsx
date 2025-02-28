@@ -19,10 +19,10 @@ const Slider = (props) => {
   // Fetching products from API
   const [products, setProducts] = useState([]);
 
-  useEffect(function() {
+  useEffect(function () {
     async function fetchProducts() {
       try {
-        const res = await axios.get('https://amazonclone-sp.herokuapp.com/api/products');
+        const res = await axios.get('http://localhost:8000/api/products');
         setProducts(res.data);
         setIsLoading(false);
       } catch (error) {
@@ -33,7 +33,7 @@ const Slider = (props) => {
     fetchProducts();
   }, [])
 
-  if (products[products.length-1]) {
+  if (products[products.length - 1]) {
     return (
       <div className='slider'>
         <div className='slider-heading'>
@@ -41,38 +41,38 @@ const Slider = (props) => {
           <a href="">{props.link_text}</a>
         </div>
         <Swiper
-            slidesPerView='auto'
-            spaceBetween={10}
-            slidesPerGroupAuto={true}
-            navigation={true}
-            modules={[Pagination, Navigation]}
-            className={props.class}
-          >
-            {
-              products.filter((item, index) => (index < props.arrTo && index >= props.arrFrom)).map(function(product) {
-                const path = "product/" + product.id;
-                return (
-                  <SwiperSlide className='swiper-slide' key={product.id}>
-                    <NavLink to={path}>
-                      <div className='swiper-slide-img-wrapper'>
-                        <img src={product.url} className="swiper-slide-img" alt={product.url} />
-                      </div>
-                      <p>{product.price}</p>
-                    </NavLink>
-                  </SwiperSlide>
-                )
-              })
-            }
-  
-          </Swiper>
+          slidesPerView='auto'
+          spaceBetween={10}
+          slidesPerGroupAuto={true}
+          navigation={true}
+          modules={[Pagination, Navigation]}
+          className={props.class}
+        >
+          {
+            products.filter((item, index) => (index < props.arrTo && index >= props.arrFrom)).map(function (product) {
+              const path = "product/" + product.id;
+              return (
+                <SwiperSlide className='swiper-slide' key={product.id}>
+                  <NavLink to={path}>
+                    <div className='swiper-slide-img-wrapper'>
+                      <img src={product.url} className="swiper-slide-img" alt={product.url} />
+                    </div>
+                    <p>{product.price}</p>
+                  </NavLink>
+                </SwiperSlide>
+              )
+            })
+          }
+
+        </Swiper>
       </div>
-    ) 
+    )
   } else {
-    return  (
+    return (
       <div className='slider' style={{ height: '332px' }}>
-        { isLoading ? <Loader /> : "" }
+        {isLoading ? <Loader /> : ""}
       </div>
-      )
+    )
   }
 }
 

@@ -8,16 +8,16 @@ const Product = () => {
 
   // Loader
   const [isLoading, setIsLoading] = useState(true);
-  
-  const {id} = useParams("");
+
+  const { id } = useParams("");
 
   // Fetching individual product from API
   const [product, setProduct] = useState();
 
-  useEffect(function() {
+  useEffect(function () {
     async function fetchSingleProduct() {
       try {
-        const res = await axios.get('https://amazonclone-sp.herokuapp.com/api/product/' + id);
+        const res = await axios.get('http://localhost:8000/api/product/' + id);
         setProduct(res.data);
         setIsLoading(false);
       } catch (error) {
@@ -33,7 +33,7 @@ const Product = () => {
   // Add to cart
   async function addToCart(id) {
     try {
-      const res = await axios.post('https://amazonclone-sp.herokuapp.com/api/addtocart/' + id, {
+      const res = await axios.post('http://localhost:8000/api/addtocart/' + id, {
         product
       }, {
         headers: {
@@ -41,7 +41,7 @@ const Product = () => {
         },
         withCredentials: true
       });
-      
+
     } catch (error) {
       if (error.response.data.message === "No token provided") {
         navigate('/login'); // Go to login if there's no cookie
@@ -52,7 +52,7 @@ const Product = () => {
   const [userData, setUserData] = useState();
   async function fetchUser() {
     try {
-      const res = await axios.get('https://amazonclone-sp.herokuapp.com/api/getAuthUser', {withCredentials: true});
+      const res = await axios.get('http://localhost:8000/api/getAuthUser', { withCredentials: true });
       if (res) {
         setUserData(res.data);
       }
@@ -72,7 +72,7 @@ const Product = () => {
       fetchUser();
 
       const script = document.createElement("script");
-      script.src="https://checkout.razorpay.com/v1/checkout.js";
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
 
       script.onerror = () => {
         alert("Razorpay SDK failed to load. Try again later");
@@ -93,12 +93,12 @@ const Product = () => {
           }, {
             withCredentials: true
           })
-          
+
           const { id, amount, currency } = res.data.order;
           const { key } = await axios.get("https://amazonclone-sp.herokuapp.com/api/get-razorpay-key");
 
           var today = new Date();
-          var date = today.getDate()+'/'+(today.getMonth()+1)+'/'+today.getFullYear();
+          var date = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
 
           const options = {
             key: key,
@@ -106,8 +106,8 @@ const Product = () => {
             currency: currency,
             order_id: id,
             name: product.name,
-            handler: async function(response) {
-              const result = await axios.post("https://amazonclone-sp.herokuapp.com/api/pay-order", {
+            handler: async function (response) {
+              const result = await axios.post("http://localhost:8000/api/pay-order", {
                 orderedProducts: orderedProducts,
                 dateOrdered: date,
                 amount: amount,
@@ -132,7 +132,7 @@ const Product = () => {
           const paymentObject = new window.Razorpay(options);
           paymentObject.open();
 
-          
+
 
         } catch (error) {
           console.log(error);
@@ -150,8 +150,8 @@ const Product = () => {
 
   const today = new Date();
   today.setDate(today.getDate() + 3);
-  const dayArr = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-  const monthArr = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const dayArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const monthArr = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const day = dayArr[today.getDay()];
   const date = today.getDate();
   const month = monthArr[today.getMonth()];
@@ -161,38 +161,38 @@ const Product = () => {
     return (
       <div className='product-section'>
         <div className='left'>
-          <img src={ product.resUrl }></img>
+          <img src={product.resUrl}></img>
         </div>
         <div className='middle'>
           <div className='product-details'>
-            <h4>{ product.name }</h4>
+            <h4>{product.name}</h4>
             <div className='divider'></div>
             <div className='price'>
-              { product.discount } 
+              {product.discount}
               <span>
                 <span className='sup'> ₹</span>
-                { product.value }
+                {product.value}
                 <span className='sup'>00</span>
               </span>
             </div>
-            <div className='mrp'>M.R.P.: <strike>{ product.mrp }</strike></div>
+            <div className='mrp'>M.R.P.: <strike>{product.mrp}</strike></div>
             <p className='taxes'>Inclusive of all taxes</p>
           </div>
           <div className='about-product'>
             <h6>About this item</h6>
             <ul>
-              { product.points.map(function(point, index) {
+              {product.points.map(function (point, index) {
                 return (
                   <li key={index}>{point}</li>
                 )
-              }) }
+              })}
             </ul>
           </div>
         </div>
         <div className='right'>
-          <h3><span><span className='sup'>₹</span>{ product.value }<span className='sup'>00</span></span></h3>
+          <h3><span><span className='sup'>₹</span>{product.value}<span className='sup'>00</span></span></h3>
           <p><span>FREE delivery:</span> {deliveryDate}</p>
-          <button id="addtocart-btn" onClick={ () => addToCart(product.id) }>Add to Cart</button>
+          <button id="addtocart-btn" onClick={() => addToCart(product.id)}>Add to Cart</button>
           <button onClick={loadRazorpay} >Buy Now</button>
         </div>
       </div>
@@ -200,7 +200,7 @@ const Product = () => {
   } else {
     return (
       <div>
-        { isLoading ? <Loader /> : "" }
+        {isLoading ? <Loader /> : ""}
       </div>
     )
   }

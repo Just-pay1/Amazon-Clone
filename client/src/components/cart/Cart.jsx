@@ -18,19 +18,19 @@ const Cart = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('https://amazonclone-sp.herokuapp.com/api/getAuthUser', {withCredentials: true})
-        .then(function(res) {
-          setUserData(res.data);
-          setCartArr(res.data.cart);
-          setIsLoading(false);
-        })
-        .catch(function(error) {
-          if (error.response.data.message == "No token provided") {
-            navigate('/login');
-          } else {
-            console.log(error);
-          }
-        });
+    axios.get('http://localhost:8000/api/getAuthUser', { withCredentials: true })
+      .then(function (res) {
+        setUserData(res.data);
+        setCartArr(res.data.cart);
+        setIsLoading(false);
+      })
+      .catch(function (error) {
+        if (error.response.data.message == "No token provided") {
+          navigate('/login');
+        } else {
+          console.log(error);
+        }
+      });
   }, [])
 
   // Creating an array of products ordered
@@ -54,24 +54,24 @@ const Cart = () => {
 
   function loadRazorpay() {
     const script = document.createElement("script");
-    script.src="https://checkout.razorpay.com/v1/checkout.js";
+    script.src = "http://localhost:8000/v1/checkout.js";
 
     script.onerror = () => {
       alert("Razorpay SDK failed to load. Try again later");
     };
     script.onload = async () => {
       try {
-        const res = await axios.post("https://amazonclone-sp.herokuapp.com/api/create-order", {
+        const res = await axios.post("http://localhost:8000/api/create-order", {
           amount: orderAmount + '00'
         }, {
           withCredentials: true
         })
-        
+
         const { id, amount, currency } = res.data.order;
         const { key } = await axios.get("https://amazonclone-sp.herokuapp.com/api/get-razorpay-key");
 
         var today = new Date();
-        var date = today.getDate()+'/'+(today.getMonth()+1)+'/'+today.getFullYear();
+        var date = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
 
         const options = {
           key: key,
@@ -79,8 +79,8 @@ const Cart = () => {
           currency: currency,
           order_id: id,
           name: "Payment",
-          handler: async function(response) {
-            const result = await axios.post("https://amazonclone-sp.herokuapp.com/api/pay-order", {
+          handler: async function (response) {
+            const result = await axios.post("http://localhost:8000/api/pay-order", {
               orderedProducts: orderedProducts,
               dateOrdered: date,
               amount: amount,
@@ -105,7 +105,7 @@ const Cart = () => {
         const paymentObject = new window.Razorpay(options);
         paymentObject.open();
 
-        
+
 
       } catch (error) {
         console.log(error);
@@ -115,7 +115,7 @@ const Cart = () => {
     document.body.appendChild(script);
   }
 
-  if (cartArr[cartArr.length-1]) {
+  if (cartArr[cartArr.length - 1]) {
 
     let totalQty = 0;
 
@@ -123,33 +123,33 @@ const Cart = () => {
       totalQty += cartArr[i].qty;
     }
 
-    let amount = orderAmount.toString();  
-    let lastThree = amount.substring(amount.length-3);
-    let otherNumbers = amount.substring(0,amount.length-3);
-    if(otherNumbers != '')
+    let amount = orderAmount.toString();
+    let lastThree = amount.substring(amount.length - 3);
+    let otherNumbers = amount.substring(0, amount.length - 3);
+    if (otherNumbers != '')
       lastThree = ',' + lastThree;
     amount = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
 
     return (
       <>
-        { isLoading ? 
+        {isLoading ?
           <Loader /> :
           <div className='cart-section'>
-          <div className='left'>
-            <h3>Shopping Cart</h3>
-            <p className='price-heading'>Price</p>
-            {
-              cartArr.map(function(cart, index) {
-                return <CartProduct key={index} cartItem={cart.cartItem} qty={cart.qty} />
-              })
-            }
-            <SubTotal totalQty={totalQty} subTotal={amount} />
+            <div className='left'>
+              <h3>Shopping Cart</h3>
+              <p className='price-heading'>Price</p>
+              {
+                cartArr.map(function (cart, index) {
+                  return <CartProduct key={index} cartItem={cart.cartItem} qty={cart.qty} />
+                })
+              }
+              <SubTotal totalQty={totalQty} subTotal={amount} />
+            </div>
+            <div className="right">
+              <SubTotal totalQty={totalQty} subTotal={amount} />
+              <button onClick={loadRazorpay} >Proceed to Buy</button>
+            </div>
           </div>
-          <div className="right">
-            <SubTotal totalQty={totalQty} subTotal={amount} />
-            <button onClick={loadRazorpay} >Proceed to Buy</button>
-          </div>
-        </div>
         }
       </>
     )
@@ -158,10 +158,10 @@ const Cart = () => {
       <>
         {
           isLoading ?
-          <Loader /> :
-          <Alert variant="outlined" severity="warning" style={{ width: '80%', margin: '30px auto', fontSize: '16px', display: 'flex', justifyContent: 'center' }}>
-            Cart is empty
-          </Alert>
+            <Loader /> :
+            <Alert variant="outlined" severity="warning" style={{ width: '80%', margin: '30px auto', fontSize: '16px', display: 'flex', justifyContent: 'center' }}>
+              Cart is empty
+            </Alert>
         }
       </>
     )
