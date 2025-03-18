@@ -32,7 +32,7 @@ router.post("/create-payment", authenticate, async (req, res) => {
     const hash = createHash('sha256');
     hash.update(concatenatedData);
     const expectedSignature = hash.digest('hex');
-    res.status(200).json({ signature: expectedSignature });
+    // res.status(200).json({ signature: expectedSignature });
 
 
     const gatewayUrl = "https://your-payment-gateway.com/api/pay"; // Replace with actual URL
