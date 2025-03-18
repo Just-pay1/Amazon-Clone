@@ -26,6 +26,7 @@ require('./database/connection');
 
 // Routes
 const router = require('./routes/router');
+const payRouter = require('./routes/payment');
 
 // Middleware
 app.use(morgan('dev'));
@@ -33,6 +34,7 @@ app.use(express.json());
 app.use(cookieParser(""));
 app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 app.use('/api', router);
+app.use('/api', payRouter);
 
 
 
